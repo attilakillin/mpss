@@ -1,9 +1,12 @@
 package hu.swarch.mpss.entities
 
 import java.time.Duration
+import javax.persistence.Entity
 
-data class BasicPart(
-    val name: String,
+@Entity(name = "basic_parts")
+class BasicPart(
+    id: Long,
+    name: String,
     val price: Double,
     val procurementTime: Duration
-) : Part
+) : Part(id, name)
