@@ -2,8 +2,8 @@ package hu.swarch.mpss.entities
 
 import javax.persistence.*
 
-@Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Entity(name = "parts")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 abstract class Part(
     @Id @GeneratedValue
     open val id: Long,

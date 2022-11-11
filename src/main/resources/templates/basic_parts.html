@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="h-100">
+    <div th:replace="fragments/generic_head :: head('Manage basic parts')"></div>
+    <body class="container h-100">
+        <div class="row h-100 justify-content-center align-items-baseline">
+            <div class="col-lg-10 m-1 p-3 rounded" style="background: #eeeeee">
+
+                <h1 class="text-center">Manage basic parts</h1>
+                <p>
+                    The table below contains all basic parts currently registered in the system.
+                    To create, modify, or delete an entry, simply click the respective buttons below.
+                </p>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Procurement Time</th>
+                            <th scope="col">
+                                <button type="button" class="btn btn-outline-primary float-end">New</button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="part : ${parts}">
+                            <td th:text="${part.name}"></td>
+                            <td th:text="${part.price}"></td>
+                            <td th:text="${part.procurementTime}"></td>
+                            <td>
+                                <div class="float-end">
+                                    <button type="button" class="btn btn-outline-primary me-1">Edit</button>
+                                    <button type="button" class="btn btn-outline-danger">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    </body>
+</html>

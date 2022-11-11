@@ -3,7 +3,7 @@ package hu.swarch.mpss.entities
 import java.time.Duration
 import javax.persistence.Entity
 
-@Entity(name = "basic_parts")
+@Entity
 class BasicPart(
     id: Long,
     name: String,
