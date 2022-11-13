@@ -1,8 +1,7 @@
 package hu.swarch.mpss.entities
 
 import javax.persistence.*
-
-@Entity(name = "parts")
+@Embeddable
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 abstract class Part(
     @Id @GeneratedValue

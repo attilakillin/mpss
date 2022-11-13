@@ -10,6 +10,6 @@ class ComplexPart(
     id: Long,
     name: String,
     @ElementCollection @CollectionTable(name = "complex_part_subparts")
-    val subparts: List<Part>,
+    val subparts: Set<Part>,
     val constructionTime: Duration
 ) : Part(id, name)
