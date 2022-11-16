@@ -5,7 +5,7 @@ import javax.persistence.*
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 abstract class Part(
     @Id @GeneratedValue
-    open val id: Long = 0,
+    open var id: Long = 0,
     open val name: String
 ) {
     override fun equals(other: Any?): Boolean {
