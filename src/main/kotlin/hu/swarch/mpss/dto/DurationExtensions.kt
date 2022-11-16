@@ -18,6 +18,8 @@ fun Duration.prettyPrint(): String {
 }
 
 fun String.toDuration(): Duration? {
+    if (isBlank() || !matches(Regex("""^( *[0-9]+d)?( *[0-9]+h)?( *[0-9]+m)?( *[0-9]+s)?$"""))) return null
+
     var result = Duration.ZERO
 
     val parts = split(' ')

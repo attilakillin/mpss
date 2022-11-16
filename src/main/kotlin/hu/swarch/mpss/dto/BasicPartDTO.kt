@@ -14,6 +14,8 @@ fun BasicPart.toDTO(): BasicPartDTO {
 }
 
 fun BasicPartDTO.toEntity(): BasicPart? {
+    if (name.isBlank()) return null
+
     val duration = procurementTime.toDuration() ?: return null
     return BasicPart(name, price, duration)
 }
