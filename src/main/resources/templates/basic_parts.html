@@ -74,15 +74,19 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="edit_name" class="col-form-label">Name:</label>
-                            <input type="text" class="form-control" id="edit_name">
+                            <input type="text" class="form-control" id="edit_name" placeholder="Name">
                         </div>
                         <div class="mb-3">
                             <label for="edit_price" class="col-form-label">Price:</label>
-                            <input type="text" class="form-control" id="edit_price">
+                            <input type="text" class="form-control" id="edit_price" placeholder="0.0">
                         </div>
                         <div class="mb-3">
                             <label for="edit_procurementTime" class="col-form-label">Procurement time:</label>
-                            <input type="text" class="form-control" id="edit_procurementTime">
+                            <input type="text" class="form-control" id="edit_procurementTime" placeholder="0h 0m">
+                        </div>
+                        <div class="alert alert-danger" id="edit_fail_message" hidden>
+                            Could not save part! Make sure the price and procurement time
+                            entries are formatted properly!
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -133,6 +137,10 @@
                 editModal.querySelector('#edit_procurementTime').value = button.getAttribute('data-bs-procurementTime');
             });
 
+            editModal.addEventListener('hide.bs.modal', () => {
+               editModal.querySelector('#edit_fail_message').setAttribute("hidden", "true");
+            });
+
             // Handles data fill for the delete modal.
             const deleteModal = document.getElementById("deleteModal");
             deleteModal.addEventListener('show.bs.modal', event => {
@@ -146,7 +154,10 @@
                     id: selectedId
                 };
 
-                sendDataAndReload('DELETE', '/basic_parts', dataToSend);
+                sendDataAndDoOrElse('DELETE', '/basic_parts', dataToSend,
+                    () => location.reload(),
+                    () => {}
+                );
             }
 
             // Handles creation and edit requests.
@@ -159,7 +170,10 @@
                 };
 
                 const method = (selectedId == null) ? 'POST' : 'PUT';
-                sendDataAndReload(method, '/basic_parts', dataToSend);
+                sendDataAndDoOrElse(method, '/basic_parts', dataToSend,
+                    () => location.reload(),
+                    () => document.getElementById("edit_fail_message").removeAttribute("hidden")
+                );
             }
         </script>
     </body>

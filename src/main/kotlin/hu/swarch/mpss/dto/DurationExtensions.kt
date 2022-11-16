@@ -18,25 +18,25 @@ fun Duration.prettyPrint(): String {
 }
 
 fun String.toDuration(): Duration? {
-    val result = Duration.ZERO
+    var result = Duration.ZERO
 
     val parts = split(' ')
     for (part in parts) {
         if (part.endsWith('d')) {
             val days = part.substringBefore('d').toLongOrNull() ?: return null
-            result.plusDays(days)
+            result = result.plusDays(days)
         }
         if (part.endsWith('h')) {
             val hours = part.substringBefore('h').toLongOrNull() ?: return null
-            result.plusHours(hours)
+            result = result.plusHours(hours)
         }
         if (part.endsWith('m')) {
             val minutes = part.substringBefore('m').toLongOrNull() ?: return null
-            result.plusMinutes(minutes)
+            result = result.plusMinutes(minutes)
         }
         if (part.endsWith('s')) {
             val seconds = part.substringBefore('s').toLongOrNull() ?: return null
-            result.plusSeconds(seconds)
+            result = result.plusSeconds(seconds)
         }
     }
 
