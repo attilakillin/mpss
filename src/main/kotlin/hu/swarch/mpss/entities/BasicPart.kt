@@ -5,8 +5,7 @@ import javax.persistence.Entity
 
 @Entity
 class BasicPart(
-    id: Long,
     name: String,
     val price: Double,
     val procurementTime: Duration
-) : Part(id, name)
+) : Part(name = name)

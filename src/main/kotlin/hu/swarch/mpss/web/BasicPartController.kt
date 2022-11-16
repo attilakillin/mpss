@@ -15,7 +15,7 @@ class BasicPartController(
 ) {
     @GetMapping
     fun getBasicParts(model: Model): String {
-        partRepository.save(BasicPart(0, "Sample", 69420.0, Duration.ofHours(10)))
+        partRepository.save(BasicPart("Sample", 69420.0, Duration.ofHours(10)))
 
         model.addAttribute("parts", partRepository.findAllBasicParts())
         return "basic_parts"

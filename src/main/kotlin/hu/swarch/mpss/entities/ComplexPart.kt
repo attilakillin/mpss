@@ -4,13 +4,15 @@ import java.time.Duration
 import javax.persistence.CollectionTable
 import javax.persistence.ElementCollection
 import javax.persistence.Entity
+import javax.persistence.JoinColumn
+import javax.persistence.JoinTable
 import javax.persistence.OneToMany
 
 @Entity
 class ComplexPart(
-    id: Long,
     name: String,
-    @OneToMany @CollectionTable(name = "complex_part_subparts")
-    val subparts: Set<Part>,
+    @ElementCollection
+    @JoinTable(name = "complex_part_subparts", joinColumns = [JoinColumn(name = "part_id", referencedColumnName = "id")])
+    val subparts: Map<Part, Int>,
     val constructionTime: Duration
-) : Part(id, name)
+) : Part(name = name)
