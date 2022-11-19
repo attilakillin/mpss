@@ -9,7 +9,7 @@ import javax.persistence.OneToOne
 @Entity(name = "products")
 class Product(
     @Id @GeneratedValue
-    val id: Long = 0,
+    var id: Long = 0,
     val name: String,
     @OneToOne @JoinColumn(name = "main_part_id")
     val mainPart: Part

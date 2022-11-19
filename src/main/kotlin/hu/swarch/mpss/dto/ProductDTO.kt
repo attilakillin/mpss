@@ -19,3 +19,8 @@ fun ProductDTO.toEntity(): Product? {
 
     return Product(0, name, BasicPart("demo", 0.0, Duration.ZERO))
 }
+
+fun ProductDTO.toEntityWithId(): Product? {
+    if (id == null) return null
+    return toEntity()?.also { it.id = id } ?: return null
+}
