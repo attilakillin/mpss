@@ -8,7 +8,6 @@ enum class PartType {
 }
 
 data class PartDTO (
-
     val id: Long?,
     val type: String?,
     val name: String

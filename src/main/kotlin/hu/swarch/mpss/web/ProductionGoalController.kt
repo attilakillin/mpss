@@ -2,6 +2,7 @@ package hu.swarch.mpss.web
 
 import hu.swarch.mpss.dal.ProductionGoalRepository
 import hu.swarch.mpss.dto.*
+import hu.swarch.mpss.services.ProductionGoalService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.*
 @Controller
 @RequestMapping("/production_goals")
 class ProductionGoalController(
-    private val productionGoalRepository: ProductionGoalRepository
+    private val productionGoalRepository: ProductionGoalRepository,
+    private val productionGoalService: ProductionGoalService
 ) {
 
     @GetMapping
@@ -23,17 +25,12 @@ class ProductionGoalController(
 
     @PostMapping
     fun postBasicPart(@RequestBody data: ProductionGoalDTO, model: Model): ResponseEntity<Unit> {
-        val goal = data.toEntity() ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
-
-        productionGoalRepository.save(goal)
+        productionGoalService.createProductionGoal(data)
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
     @PutMapping
     fun putBasicPart(@RequestBody data: ProductionGoalDTO, model: Model): ResponseEntity<Unit> {
-        val goal = data.toEntityWithId() ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
-
-        productionGoalRepository.save(goal)
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 

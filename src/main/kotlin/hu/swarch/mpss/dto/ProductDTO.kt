@@ -7,20 +7,9 @@ import java.time.Duration
 data class ProductDTO (
     val id: Long?,
     val name: String,
-    // TODO list of PARTs
+    val mainPart_id: Long
 )
 
 fun Product.toDTO(): ProductDTO {
-    return ProductDTO(id, name)
-}
-
-fun ProductDTO.toEntity(): Product? {
-    if (name.isBlank()) return null
-
-    return Product(0, name, BasicPart("demo", 0.0, Duration.ZERO))
-}
-
-fun ProductDTO.toEntityWithId(): Product? {
-    if (id == null) return null
-    return toEntity()?.also { it.id = id } ?: return null
+    return ProductDTO(id, name, mainPart.id)
 }
