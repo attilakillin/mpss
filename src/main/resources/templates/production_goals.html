@@ -72,7 +72,13 @@
                     <label for="edit_deadline" class="col-form-label">Deadline</label>
                     <input type="date" class="form-control" id="edit_deadline" placeholder="Deadline">
                 </div>
-
+                <div class="mb-3">
+                    <label for="edit_main-part" class="col-form-label">Main-part:</label>
+                    <select class="form-select" multiple aria-label="Default select example"
+                            id="edit_main-part">
+                        <option th:each="p : ${products}" th:value="${p.id}" th:text="${p.name}"></option>
+                    </select>
+                </div>
                 <div class="alert alert-danger" id="edit_fail_message" hidden>
                     Could not save goal! Make sure the deadline is formatted properly!
                 </div>
