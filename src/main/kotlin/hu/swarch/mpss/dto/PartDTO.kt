@@ -1,9 +1,7 @@
 package hu.swarch.mpss.dto
 
-import hu.swarch.mpss.dal.PartRepository
 import hu.swarch.mpss.entities.BasicPart
 import hu.swarch.mpss.entities.ComplexPart
-import org.springframework.data.convert.ThreeTenBackPortConverters.StringToZoneIdConverter
 
 enum class PartType {
     BasicPart, ComplexPart

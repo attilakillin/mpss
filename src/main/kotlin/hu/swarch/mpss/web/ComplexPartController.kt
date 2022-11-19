@@ -27,11 +27,4 @@ class ComplexPartController(
         model.addAttribute("parts", partRepository.findAllComplexParts())
         return "complex_parts"
     }
-
-    @GetMapping("/{id}")
-    fun getComplexPartById(@PathVariable id: Long, model: Model): String {
-        val goal = partRepository.findById(id)
-        model.addAttribute("complex_part", goal)
-        return ""
-    }
 }
