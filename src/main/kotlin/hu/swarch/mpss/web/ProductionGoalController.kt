@@ -21,7 +21,7 @@ class ProductionGoalController(
 
     @GetMapping
     fun getGoals(model: Model): String {
-        model.addAttribute("goals", productionGoalRepository.findAll().map { it.toDTO() })
+        model.addAttribute("goals", productionGoalRepository.findAll())
         model.addAttribute("products", productRepository.findAll())
         return "production_goals"
     }

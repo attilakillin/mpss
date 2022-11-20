@@ -23,8 +23,8 @@
             <thead>
             <tr>
                 <th scope="col">ID</th>
-                <th scope="col">Number of parts</th>
                 <th scope="col">Deadline</th>
+                <th scope="col">Parts</th>
                 <th scope="col">
                     <button type="button" class="btn btn-outline-primary float-end"
                             data-bs-toggle="modal" data-bs-target="#editModal">
@@ -36,18 +36,20 @@
             <tbody>
             <tr th:each="goal : ${goals}">
                 <td th:text="${goal.id}"></td>
-                <td th:text="${goal.products.size()}"></td>
-                <td th:text="${goal.deadline_time}"></td>
+                <td th:text="${goal.deadline}"></td>
+                <td>
+                    <div th:each="g : ${goal.products}" th:text="'+ ' + ${g.name}"></div>
+                </td>
                 <td>
                     <div class="float-end">
                         <button type="button" class="btn btn-outline-primary me-1 hover-button"
                                 data-bs-toggle="modal" data-bs-target="#editModal"
-                                th:data-bs-id="${goal.id}" th:data-bs-deadline="${goal.deadline_time}">
+                                th:data-bs-id="${goal.id}" th:data-bs-deadline="${goal.deadline}">
                             Edit
                         </button>
                         <button type="button" class="btn btn-outline-danger hover-button"
                                 data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                th:data-bs-id="${goal.id}" th:data-bs-deadline="${goal.deadline_time}">
+                                th:data-bs-id="${goal.id}" th:data-bs-deadline="${goal.deadline}">
                             Delete
                         </button>
                     </div>
@@ -73,11 +75,32 @@
                     <input type="date" class="form-control" id="edit_deadline" placeholder="Deadline">
                 </div>
                 <div class="mb-3">
-                    <label for="edit_main-part" class="col-form-label">Main-part:</label>
-                    <select class="form-select" multiple aria-label="Default select example"
-                            id="edit_main-part">
-                        <option th:each="p : ${products}" th:value="${p.id}" th:text="${p.name}"></option>
-                    </select>
+                    <table id="subpartTable" class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">Component</th>
+                            <th scope="col">Count</th>
+                            <th>
+                                <div class="dropdown float-end">
+                                    <button class="btn btn-outline-primary dropdown-toggle"
+                                            type="button" data-bs-toggle="dropdown">
+                                        New
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li th:each="p : ${products}">
+                                            <a class="dropdown-item" th:text="${p.name}"
+                                               th:data-name="${p.name}" th:data-id="${p.id}"
+                                               onclick="createNewSubproduct(event)">
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
                 <div class="alert alert-danger" id="edit_fail_message" hidden>
                     Could not save goal! Make sure the deadline is formatted properly!
@@ -126,6 +149,18 @@
 
         selectedId = button.getAttribute('data-bs-id');
         editModal.querySelector('#edit_deadline').value = button.getAttribute('data-bs-name');
+
+        const table = editModal.querySelector('#subpartTable tbody');
+        if (button.getAttribute('data-bs-subparts')) {
+            const subparts = button.getAttribute('data-bs-subparts').split(',');
+            for (const partText of subparts) {
+                const elements = partText.split("=");
+
+                const newRow = table.insertRow(table.rows.length);
+                newRow.setAttribute("data-id", elements[0]);
+                newRow.innerHTML = `<td>${elements[1]}</td><td><input class="form-control" type="text" placeholder="0" value="${elements[2]}"/></td><td><button type="button" class="btn btn-outline-danger" onclick="deleteSubpart(${elements[0]})">Delete</button></td>`;
+            }
+        }
     });
 
     editModal.addEventListener('hide.bs.modal', () => {
