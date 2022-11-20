@@ -39,14 +39,14 @@
                         <tr th:each="part : ${parts}">
                             <td th:text="${part.name}"></td>
                             <td th:text="${part.price}"></td>
-                            <td th:text="${part.procurementTime}"></td>
+                            <td th:text="${part.getProcurementTimeAsString()}"></td>
                             <td>
                                 <div class="float-end">
                                     <button type="button" class="btn btn-outline-primary me-1 hover-button"
                                             data-bs-toggle="modal" data-bs-target="#editModal"
                                             th:data-bs-id="${part.id}"
                                             th:data-bs-name="${part.name}" th:data-bs-price="${part.price}"
-                                            th:data-bs-procurementTime="${part.procurementTime}">
+                                            th:data-bs-procurementTime="${part.getProcurementTimeAsString()}">
                                         Edit
                                     </button>
                                     <button type="button" class="btn btn-outline-danger hover-button"

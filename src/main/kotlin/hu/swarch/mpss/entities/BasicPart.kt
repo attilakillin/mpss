@@ -1,5 +1,6 @@
 package hu.swarch.mpss.entities
 
+import hu.swarch.mpss.dto.prettyPrint
 import java.time.Duration
 import javax.persistence.Entity
 
@@ -8,4 +9,6 @@ class BasicPart(
     name: String,
     val price: Double,
     val procurementTime: Duration
-) : Part(name = name)
+) : Part(name = name) {
+    val procurementTimeAsString = procurementTime.prettyPrint()
+}
