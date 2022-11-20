@@ -20,13 +20,16 @@ class ComplexPartService(
         for ((subpartId, count) in dto.subparts) {
             if (count == 0 || dto.id == subpartId) return null
             val subpart = partRepository.findByIdOrNull(subpartId) ?: return null
+            if (subpart is ComplexPart && subpart.isFinalProduct) return null
+
             subparts[subpart] = count
         }
 
         return ComplexPart(
             name = dto.name,
             constructionTime = constructionTime,
-            subparts = subparts
+            subparts = subparts,
+            isFinalProduct = dto.isFinalProduct
         )
     }
 
