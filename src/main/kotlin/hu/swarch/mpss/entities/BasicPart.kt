@@ -11,4 +11,7 @@ class BasicPart(
     val procurementTime: Duration
 ) : Part(name = name) {
     val procurementTimeAsString = procurementTime.prettyPrint()
+    override fun calculateSumDuration(): Duration {
+        return procurementTime
+    }
 }

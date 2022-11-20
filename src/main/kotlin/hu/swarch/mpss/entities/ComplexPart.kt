@@ -18,4 +18,13 @@ class ComplexPart(
 ) : Part(name = name) {
     val constructionTimeAsString = constructionTime.prettyPrint()
     val subpartsAsString = subparts.prettyPrint()
+    override fun calculateSumDuration(): Duration {
+        var max = Duration.ZERO
+        for (e in subparts) {
+            val dur = e.key.calculateSumDuration()
+            if (max < dur)
+                max = dur
+        }
+        return max.plus(constructionTime)
+    }
 }
