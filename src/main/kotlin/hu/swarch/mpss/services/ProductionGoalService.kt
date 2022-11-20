@@ -8,8 +8,8 @@ import hu.swarch.mpss.entities.Part
 import hu.swarch.mpss.entities.ProductionGoal
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import java.time.LocalDate
-import java.time.ZoneId
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Service
 class ProductionGoalService(
@@ -19,8 +19,10 @@ class ProductionGoalService(
     private fun dtoToEntity(dto: ProductionGoalDTO): ProductionGoal? {
         if (dto.products.isEmpty()) return null
 
-        val date: LocalDate = try { LocalDate.parse(dto.deadline_time) } catch (e: Exception) { return null }
-        val instant = date.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant()
+        val deadline = try {
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            LocalDateTime.parse(dto.deadline_time, formatter)
+        } catch (e: Exception) { return null }
 
         val products: MutableMap<Part, Int> = mutableMapOf()
         for ((productId, count) in dto.products) {
@@ -34,7 +36,7 @@ class ProductionGoalService(
         return ProductionGoal(
             id = 0,
             products = products,
-            deadline = instant
+            deadline = deadline
         )
     }
 

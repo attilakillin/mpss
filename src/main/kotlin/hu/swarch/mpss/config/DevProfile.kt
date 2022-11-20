@@ -10,7 +10,7 @@ import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import java.time.Duration
-import java.time.Instant
+import java.time.LocalDateTime
 
 @Profile("dev")
 @Service
@@ -49,11 +49,11 @@ class DevProfile(
         // Goals:
         goalRepository.save(ProductionGoal(
             products = mapOf(omicron to 3),
-            deadline = Instant.now()
+            deadline = LocalDateTime.of(2022, 11, 28, 23, 59, 0)
         ))
         goalRepository.save(ProductionGoal(
             products = mapOf(omicron to 1),
-            deadline = Instant.now().plusSeconds(1234_0000)
+            deadline = LocalDateTime.of(2022, 12, 9, 11, 59, 0)
         ))
     }
 }
