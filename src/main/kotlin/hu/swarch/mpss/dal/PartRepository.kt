@@ -14,4 +14,10 @@ interface PartRepository : JpaRepository<Part, Long> {
 
     @Query("from ComplexPart")
     fun findAllComplexParts(): List<ComplexPart>
+
+    @Query("from ComplexPart where isFinalProduct = true")
+    fun findAllFinalProducts(): List<ComplexPart>
+
+    @Query("from ComplexPart where isFinalProduct = false")
+    fun findAllNonFinalComplexParts(): List<ComplexPart>
 }

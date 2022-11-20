@@ -13,7 +13,8 @@ class ComplexPart(
     @ElementCollection
     @JoinTable(name = "complex_part_subparts", joinColumns = [JoinColumn(name = "part_id", referencedColumnName = "id")])
     val subparts: Map<Part, Int>,
-    val constructionTime: Duration
+    val constructionTime: Duration,
+    val isFinalProduct: Boolean
 ) : Part(name = name) {
     val constructionTimeAsString = constructionTime.prettyPrint()
     val subpartsAsString = subparts.prettyPrint()

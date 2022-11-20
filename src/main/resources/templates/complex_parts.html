@@ -27,6 +27,7 @@
                             <th scope="col">Name</th>
                             <th scope="col">Construction Time</th>
                             <th scope="col">Components</th>
+                            <th scope="col">Final Product?</th>
                             <th scope="col">
                                 <button type="button" class="btn btn-outline-primary float-end"
                                         data-bs-toggle="modal" data-bs-target="#editModal">
@@ -42,13 +43,16 @@
                             <td>
                                 <div th:each="subpart : ${part.subparts}" th:text="${subpart.value} + 'x ' + ${subpart.key.name}"></div>
                             </td>
+                            <td th:text="${part.isFinalProduct} ? 'Yes' : 'No'">
+                            </td>
                             <td>
                                 <div class="float-end">
                                     <button type="button" class="btn btn-outline-primary me-1 hover-button"
                                             data-bs-toggle="modal" data-bs-target="#editModal"
                                             th:data-bs-id="${part.id}" th:data-bs-name="${part.name}"
                                             th:data-bs-constructionTime="${part.getConstructionTimeAsString()}"
-                                            th:data-bs-subparts="${part.getSubpartsAsString()}">
+                                            th:data-bs-subparts="${part.getSubpartsAsString()}"
+                                            th:data-bs-isFinalProduct="${part.isFinalProduct}">
                                         Edit
                                     </button>
                                     <button type="button" class="btn btn-outline-danger hover-button"
@@ -83,6 +87,10 @@
                             <input type="text" class="form-control" id="edit_constructionTime" placeholder="0h 0m">
                         </div>
                         <div class="mb-3">
+                            <input class="form-check-input" type="checkbox" id="edit_isFinalProduct">
+                            <label for="edit_isFinalProduct" class="form-check-label">This part is a final product</label>
+                        </div>
+                        <div class="mb-3">
                             <table id="subpartTable" class="table table-hover">
                                 <thead>
                                     <tr>
@@ -95,7 +103,7 @@
                                                     New
                                                 </button>
                                                 <ul class="dropdown-menu">
-                                                    <li th:each="part : ${allParts}">
+                                                    <li th:each="part : ${allIntermediateParts}">
                                                         <a class="dropdown-item" th:text="${part.name}"
                                                            th:data-name="${part.name}" th:data-id="${part.id}"
                                                            onclick="createNewSubpart(event)">
@@ -161,6 +169,13 @@
                 editModal.querySelector('#edit_name').value = button.getAttribute('data-bs-name');
                 editModal.querySelector('#edit_constructionTime').value = button.getAttribute('data-bs-constructionTime');
 
+                const checked = button.getAttribute('data-bs-isFinalProduct') === "true";
+                if (checked) {
+                    editModal.querySelector('#edit_isFinalProduct').checked = "true";
+                } else {
+                    editModal.querySelector('#edit_isFinalProduct').removeAttribute("checked");
+                }
+
                 const table = editModal.querySelector('#subpartTable tbody');
 
                 if (button.getAttribute('data-bs-subparts')) {
@@ -225,12 +240,13 @@
                     id: selectedId,
                     name: document.getElementById('edit_name').value,
                     constructionTime: document.getElementById('edit_constructionTime').value,
-                    subparts: {}
+                    subparts: {},
+                    isFinalProduct: document.getElementById('edit_isFinalProduct').checked
                 };
 
                 for (const row of editModal.querySelector("#subpartTable tbody").children) {
                     const id = row.getAttribute("data-id");
-                    dataToSend.subparts[id] = row.querySelector("input").value || 0;
+                    dataToSend.subparts[id] = Number(dataToSend.subparts[id] || 0) + Number(row.querySelector("input").value || 0);
                 }
 
                 const method = (selectedId == null) ? 'POST' : 'PUT';
