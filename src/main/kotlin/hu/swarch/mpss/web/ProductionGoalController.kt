@@ -1,6 +1,6 @@
 package hu.swarch.mpss.web
 
-import hu.swarch.mpss.dal.ProductRepository
+import hu.swarch.mpss.dal.PartRepository
 import hu.swarch.mpss.dal.ProductionGoalRepository
 import hu.swarch.mpss.dto.*
 import hu.swarch.mpss.services.EntityDoesntExists
@@ -19,13 +19,13 @@ import java.lang.Exception
 class ProductionGoalController(
     private val productionGoalRepository: ProductionGoalRepository,
     private val productionGoalService: ProductionGoalService,
-    private val productRepository: ProductRepository
+    private val partRepository: PartRepository
 ) {
 
     @GetMapping
     fun getGoals(model: Model): String {
         model.addAttribute("goals", productionGoalRepository.findAll())
-        model.addAttribute("products", productRepository.findAll())
+        model.addAttribute("products", partRepository.findAllFinalProducts())
         return "production_goals"
     }
 

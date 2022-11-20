@@ -11,9 +11,9 @@ class ProductionGoal(
     @Id @GeneratedValue
     var id: Long = 0,
     @OneToMany @CollectionTable(name = "production_goal_products")
-    val products: List<Product>,
+    val products: List<Part>,
     val deadline: Instant
 ) {
     val getProductsAsString = products.prettyPrint()
-    val getDeadlineAsString = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.of("Europe/Budapest")).format(deadline)
+    val getDeadlineAsString: String = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.of("Europe/Budapest")).format(deadline)
 }

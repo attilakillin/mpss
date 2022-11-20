@@ -5,5 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ProductionGoalRepository : JpaRepository<ProductionGoal, Long> {
-}
+interface ProductionGoalRepository : JpaRepository<ProductionGoal, Long>
