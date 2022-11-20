@@ -11,12 +11,12 @@ class SecurityConfig {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
-                .authorizeRequests()
-                .antMatchers("/css/**", "/js/**").permitAll()
-                .antMatchers("/basic_parts", "/basic_parts/**").permitAll()
-                .antMatchers("/production_goals", "/production_goals/**").permitAll()
-                .antMatchers("/complex_parts", "/complex_parts/**").permitAll()
-                .anyRequest().authenticated()
+            .authorizeRequests()
+            .antMatchers("/css/**", "/js/**").permitAll()
+            .antMatchers("/basic_parts", "/basic_parts/**").permitAll()
+            .antMatchers("/production_goals", "/production_goals/**").permitAll()
+            .antMatchers("/complex_parts", "/complex_parts/**").permitAll()
+            .anyRequest().authenticated()
 
         return http.build()
     }

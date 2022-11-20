@@ -39,7 +39,6 @@ class ComplexPartController(
         complexPartService.updateComplexPart(data) ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
-
     @DeleteMapping
     fun deleteComplexPart(@RequestBody id: IdDTO, model: Model): ResponseEntity<Unit> {
         complexPartService.deleteComplexPart(id.id)
