@@ -38,13 +38,13 @@
                         <tr th:each="goal : ${goals}">
                             <td th:text="${goal.getDeadlineAsString()}"></td>
                             <td>
-                                <div th:each="product : ${goal.products}" th:text="${product.name}"></div>
+                                <div th:each="product : ${goal.products}" th:text="${product.value} + 'x ' + ${product.key.name}"></div>
                             </td>
                             <td>
                                 <div class="float-end">
                                     <button type="button" class="btn btn-outline-primary me-1 hover-button"
                                             data-bs-toggle="modal" data-bs-target="#editModal"
-                                            th:data-bs-id="${goal.id}" th:data-bs-deadline="${goal.getDeadlineAsString}"
+                                            th:data-bs-id="${goal.id}" th:data-bs-deadline="${goal.getDeadlineAsString()}"
                                             th:data-bs-products="${goal.getProductsAsString()}" >
                                         Edit
                                     </button>
@@ -72,38 +72,40 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="edit_deadline" class="col-form-label">Deadline</label>
-                            <input type="date" class="form-control" id="edit_deadline" placeholder="Deadline">
+                            <label for="edit_deadline" class="col-form-label">Deadline?</label>
+                            <input type="date" class="form-control" id="edit_deadline">
                         </div>
                         <div class="mb-3">
-                            <table id="subproductsTable" class="table table-hover">
+                            <table id="productsTable" class="table table-hover">
                                 <thead>
-                                <tr>
-                                    <th scope="col">Component</th>
-                                    <th>
-                                        <div class="dropdown float-end">
-                                            <button class="btn btn-outline-primary dropdown-toggle"
-                                                    type="button" data-bs-toggle="dropdown">
-                                                New
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li th:each="p : ${products}">
-                                                    <a class="dropdown-item" th:text="${p.name}"
-                                                       th:data-name="${p.name}" th:data-id="${p.id}"
-                                                       onclick="createNewSubproduct(event)">
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </th>
-                                </tr>
+                                    <tr>
+                                        <th scope="col">Product</th>
+                                        <th scope="col">Count</th>
+                                        <th>
+                                            <div class="dropdown float-end">
+                                                <button class="btn btn-outline-primary dropdown-toggle"
+                                                        type="button" data-bs-toggle="dropdown">
+                                                    New
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li th:each="product : ${products}">
+                                                        <a class="dropdown-item" th:text="${product.name}"
+                                                           th:data-name="${product.name}" th:data-id="${product.id}"
+                                                           onclick="createNewProduct(event)">
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                 </tbody>
                             </table>
                         </div>
                         <div class="alert alert-danger" id="edit_fail_message" hidden>
-                            Could not save goal! Make sure the deadline is formatted properly!
+                            Could not save production goal! Make sure the deadline is formatted properly,
+                            and valid values are given for the products!
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -119,13 +121,8 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5">Are you sure you want to delete this goal?</h1>
+                        <h1 class="modal-title fs-5">Are you sure you want to delete this production goal?</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>
-                            Are you sure?
-                        </p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
@@ -150,24 +147,24 @@
                 selectedId = button.getAttribute('data-bs-id');
                 editModal.querySelector('#edit_deadline').value = button.getAttribute('data-bs-deadline');
 
-                const table = editModal.querySelector('#subproductsTable tbody');
-                with (table.firstChild) {
-                    table.removeChild(table.lastChild)
-                }
+                const table = editModal.querySelector('#productsTable tbody');
+
                 if (button.getAttribute('data-bs-products')) {
                     const products = button.getAttribute('data-bs-products').split(',');
-                    for (const partText of products) {
-                        const elements = partText.split("=");
+                    for (const productText of products) {
+                        const elements = productText.split("=");
 
                         const newRow = table.insertRow(table.rows.length);
                         newRow.setAttribute("data-id", elements[0]);
-                        newRow.innerHTML = `<td>${elements[1]}</td><td><button type="button" class="btn btn-outline-danger" onclick="deleteSubproduct(${elements[0]})">Delete</button></td>`;
+                        newRow.innerHTML = `<td>${elements[1]}</td><td><input class="form-control" type="text" placeholder="0" value="${elements[2]}"/></td><td><button type="button" class="btn btn-outline-danger" onclick="deleteProduct(${elements[0]})">Delete</button></td>`;
                     }
                 }
             });
 
             editModal.addEventListener('hide.bs.modal', () => {
                 editModal.querySelector('#edit_fail_message').setAttribute("hidden", "true");
+                const tableBody = editModal.querySelector('#productsTable tbody');
+                tableBody.innerHTML = "";
             });
 
             // Handles data fill for the delete modal.
@@ -177,21 +174,20 @@
                 selectedId = button.getAttribute('data-bs-id');
             });
 
-            function createNewSubproduct(event) {
+            function createNewProduct(event) {
                 const anchor = event.target;
 
                 const id = anchor.getAttribute('data-id');
                 const name = anchor.getAttribute('data-name');
 
-                const table = editModal.querySelector('#subproductsTable tbody');
+                const table = editModal.querySelector('#productsTable tbody');
                 const newRow = table.insertRow(table.rows.length);
 
                 newRow.setAttribute("data-id", id);
-                newRow.innerHTML = `<td>${name}</td><td><button type="button" class="btn btn-outline-danger" onclick="deleteSubproduct(${id})">Delete</button></td>`;
-
+                newRow.innerHTML = `<td>${name}</td><td><input class="form-control" type="text" placeholder="0"/></td><td><button type="button" class="btn btn-outline-danger" onclick="deleteProduct(${id})">Delete</button></td>`;
             }
 
-            function deleteSubproduct(id) {
+            function deleteProduct(id) {
                 editModal.querySelector(`tr[data-id="${id}"]`).remove()
             }
 
@@ -212,12 +208,12 @@
                 const dataToSend = {
                     id: selectedId,
                     deadline_time: document.getElementById('edit_deadline').value,
-                    product_ids: []
+                    products: {}
                 };
 
-                for (const row of editModal.querySelector("#subproductsTable tbody").children) {
+                for (const row of editModal.querySelector("#productsTable tbody").children) {
                     const id = row.getAttribute("data-id");
-                    dataToSend.product_ids.push(id)
+                    dataToSend.products[id] = Number(dataToSend.products[id] || 0) + Number(row.querySelector("input").value || 0);
                 }
 
                 const method = (selectedId == null) ? 'POST' : 'PUT';

@@ -11,11 +11,3 @@ fun<V> Map<Part, V>.prettyPrint(): String {
 
     return builder.toString().removeSuffix(",")
 }
-
-fun List<Part>.prettyPrint(): String {
-    val builder = StringBuilder()
-    for (e in toList()) {
-        builder.append("${e.id}=${e.name},")
-    }
-    return builder.toString().removeSuffix(",")
-}

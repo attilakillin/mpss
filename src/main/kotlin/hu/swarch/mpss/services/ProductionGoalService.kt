@@ -3,6 +3,7 @@ package hu.swarch.mpss.services
 import hu.swarch.mpss.dal.PartRepository
 import hu.swarch.mpss.dal.ProductionGoalRepository
 import hu.swarch.mpss.dto.ProductionGoalDTO
+import hu.swarch.mpss.entities.ComplexPart
 import hu.swarch.mpss.entities.Part
 import hu.swarch.mpss.entities.ProductionGoal
 import org.springframework.data.repository.findByIdOrNull
@@ -15,23 +16,46 @@ class ProductionGoalService(
     private val productionGoalRepository: ProductionGoalRepository,
     private val partRepository: PartRepository
 ) {
-    private fun dtoToEntity(productionGoalDTO: ProductionGoalDTO): ProductionGoal {
-        val date: LocalDate = LocalDate.parse(productionGoalDTO.deadline_time)
+    private fun dtoToEntity(dto: ProductionGoalDTO): ProductionGoal? {
+        if (dto.products.isEmpty()) return null
+
+        val date: LocalDate = try { LocalDate.parse(dto.deadline_time) } catch (e: Exception) { return null }
         val instant = date.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant()
 
-        val products: List<Part> = productionGoalDTO.product_ids.map {
-            partRepository.findByIdOrNull(it) ?: throw EntityDoesntExists()
+        val products: MutableMap<Part, Int> = mutableMapOf()
+        for ((productId, count) in dto.products) {
+            if (count == 0) return null
+            val product = partRepository.findByIdOrNull(productId) ?: return null
+            if (product !is ComplexPart || !product.isFinalProduct) return null
+
+            products[product] = count
         }
-        return ProductionGoal(0, products, instant)
+
+        return ProductionGoal(
+            id = 0,
+            products = products,
+            deadline = instant
+        )
     }
-    fun createProductionGoal(productionGoalDTO: ProductionGoalDTO) {
-        productionGoalRepository.save(dtoToEntity(productionGoalDTO))
+
+    fun findAllProductionGoals(): List<ProductionGoal> {
+        return productionGoalRepository.findAll()
     }
-    fun updateProductionGoal(productionGoalDTO: ProductionGoalDTO) {
-        if (productionGoalDTO.id == null)
-            throw IdCannotBeNullException()
-        if (!productionGoalRepository.existsById(productionGoalDTO.id))
-            throw EntityDoesntExists()
-        productionGoalRepository.save(dtoToEntity(productionGoalDTO).also { it.id = productionGoalDTO.id })
+
+    fun saveProductionGoal(dto: ProductionGoalDTO): ProductionGoal? {
+        if (dto.id != null) return null
+
+        val productionGoal = dtoToEntity(dto) ?: return null
+        return productionGoalRepository.save(productionGoal)
+    }
+    fun updateProductionGoal(dto: ProductionGoalDTO): ProductionGoal? {
+        if (dto.id == null || !productionGoalRepository.existsById(dto.id)) return null
+
+        val productionGoal = dtoToEntity(dto)?.also { it.id = dto.id } ?: return null
+        return productionGoalRepository.save(productionGoal)
+    }
+
+    fun deleteProductionGoal(id: Long) {
+        productionGoalRepository.deleteById(id)
     }
 }

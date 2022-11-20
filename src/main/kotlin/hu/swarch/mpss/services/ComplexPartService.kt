@@ -41,16 +41,14 @@ class ComplexPartService(
         if (dto.id != null) return null
 
         val part = dtoToEntity(dto) ?: return null
-        partRepository.save(part)
-        return part
+        return partRepository.save(part)
     }
 
     fun updateComplexPart(dto: ComplexPartDTO): ComplexPart? {
         if (dto.id == null || !partRepository.existsById(dto.id)) return null
 
         val part = dtoToEntity(dto)?.also { it.id = dto.id } ?: return null
-        partRepository.save(part)
-        return part
+        return partRepository.save(part)
     }
 
     fun deleteComplexPart(id: Long) {
