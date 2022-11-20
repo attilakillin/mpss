@@ -1,10 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="h-100">
+<!-- Head tag, using a fragment reference -->
+<div th:replace="fragments/generic_head :: head('Procurements')"></div>
+
+<!-- Internal styling for the Edit and Delete buttons -->
+<style>
+    .hover-button { opacity: 0; }
+    tr:hover .hover-button { opacity: 1; }
+</style>
+
+<!-- Body contents -->
+<body class="container h-100 my-1">
+<div class="row h-100 justify-content-center align-items-baseline">
+    <div class="col-lg-10 m-1 p-3 rounded" style="background: #eeeeee">
+
+        <h1 class="text-center">Procurements</h1>
+        <p>
+
+        </p>
+
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col">Product</th>
+                <th scope="col">Procurement duration</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${procurements}">
+                <td th:text="${p.key.productsAsString}"></td>
+                <td th:text="${p.value}"></td>
+                <td>
+                    <div class="float-end">
+                        <a th:href="'/procurement_details/' + ${p.key.id}">
+                            <button type="button" class="btn btn-outline-primary me-1 hover-button"
+                                    data-bs-toggle="modal">
+                                Details
+                            </button>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<!-- Additional scripts: Bootstrap and modal handling -->
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 
 </body>
 </html>

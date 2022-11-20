@@ -16,6 +16,7 @@ class SecurityConfig {
             .antMatchers("/basic_parts", "/basic_parts/**").permitAll()
             .antMatchers("/production_goals", "/production_goals/**").permitAll()
             .antMatchers("/complex_parts", "/complex_parts/**").permitAll()
+            .antMatchers("/procurement_details", "/procurement_details/**").permitAll()
             .anyRequest().authenticated()
 
         return http.build()

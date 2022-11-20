@@ -18,6 +18,15 @@ class ComplexPart(
 ) : Part(name = name) {
     val constructionTimeAsString = constructionTime.prettyPrint()
     val subpartsAsString = subparts.prettyPrint()
+    override fun getAllSubParts(): MutableMap<Part, String> {
+        var parts: MutableMap<Part, String> = mutableMapOf()
+        for (p in subparts) {
+            parts.putAll(p.key.getAllSubParts())
+        }
+        parts[this] = calculateSumDuration().prettyPrint()
+        return parts
+    }
+
     override fun calculateSumDuration(): Duration {
         var max = Duration.ZERO
         for (e in subparts) {

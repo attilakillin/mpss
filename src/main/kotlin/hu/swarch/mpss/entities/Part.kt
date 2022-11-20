@@ -17,6 +17,6 @@ abstract class Part(
     override fun hashCode(): Int {
         return id.hashCode()
     }
-
+    abstract fun getAllSubParts(): MutableMap<Part, String>
     abstract fun calculateSumDuration(): Duration
 }
