@@ -36,7 +36,7 @@
             <tbody>
             <tr th:each="goal : ${goals}">
                 <td th:text="${goal.id}"></td>
-                <td th:text="${goal.deadline}"></td>
+                <td th:text="${goal.getDeadlineAsString}"></td>
                 <td>
                     <div th:each="g : ${goal.products}" th:text="'+ ' + ${g.name}"></div>
                 </td>
@@ -44,12 +44,13 @@
                     <div class="float-end">
                         <button type="button" class="btn btn-outline-primary me-1 hover-button"
                                 data-bs-toggle="modal" data-bs-target="#editModal"
-                                th:data-bs-id="${goal.id}" th:data-bs-deadline="${goal.deadline}">
+                                th:data-bs-id="${goal.id}" th:data-bs-deadline="${goal.getDeadlineAsString}"
+                                th:data-bs-products="${goal.getProductsAsString}" >
                             Edit
                         </button>
                         <button type="button" class="btn btn-outline-danger hover-button"
                                 data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                th:data-bs-id="${goal.id}" th:data-bs-deadline="${goal.deadline}">
+                                th:data-bs-id="${goal.id}">
                             Delete
                         </button>
                     </div>
@@ -75,11 +76,10 @@
                     <input type="date" class="form-control" id="edit_deadline" placeholder="Deadline">
                 </div>
                 <div class="mb-3">
-                    <table id="subpartTable" class="table table-hover">
+                    <table id="subproductsTable" class="table table-hover">
                         <thead>
                         <tr>
                             <th scope="col">Component</th>
-                            <th scope="col">Count</th>
                             <th>
                                 <div class="dropdown float-end">
                                     <button class="btn btn-outline-primary dropdown-toggle"
@@ -119,7 +119,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5">Are you sure you want to delete this part?</h1>
+                <h1 class="modal-title fs-5">Are you sure you want to delete this goal?</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -148,17 +148,20 @@
         const button = event.relatedTarget;
 
         selectedId = button.getAttribute('data-bs-id');
-        editModal.querySelector('#edit_deadline').value = button.getAttribute('data-bs-name');
+        editModal.querySelector('#edit_deadline').value = button.getAttribute('data-bs-deadline');
 
-        const table = editModal.querySelector('#subpartTable tbody');
-        if (button.getAttribute('data-bs-subparts')) {
-            const subparts = button.getAttribute('data-bs-subparts').split(',');
-            for (const partText of subparts) {
+        const table = editModal.querySelector('#subproductsTable tbody');
+        with (table.firstChild) {
+            table.removeChild(table.lastChild)
+        }
+        if (button.getAttribute('data-bs-products')) {
+            const products = button.getAttribute('data-bs-products').split(',');
+            for (const partText of products) {
                 const elements = partText.split("=");
 
                 const newRow = table.insertRow(table.rows.length);
                 newRow.setAttribute("data-id", elements[0]);
-                newRow.innerHTML = `<td>${elements[1]}</td><td><input class="form-control" type="text" placeholder="0" value="${elements[2]}"/></td><td><button type="button" class="btn btn-outline-danger" onclick="deleteSubpart(${elements[0]})">Delete</button></td>`;
+                newRow.innerHTML = `<td>${elements[1]}</td><td><button type="button" class="btn btn-outline-danger" onclick="deleteSubproduct(${elements[0]})">Delete</button></td>`;
             }
         }
     });
@@ -173,6 +176,24 @@
         const button = event.relatedTarget;
         selectedId = button.getAttribute('data-bs-id');
     });
+
+    function createNewSubproduct(event) {
+        const anchor = event.target;
+
+        const id = anchor.getAttribute('data-id');
+        const name = anchor.getAttribute('data-name');
+
+        const table = editModal.querySelector('#subproductsTable tbody');
+        const newRow = table.insertRow(table.rows.length);
+
+        newRow.setAttribute("data-id", id);
+        newRow.innerHTML = `<td>${name}</td><td><button type="button" class="btn btn-outline-danger" onclick="deleteSubproduct(${id})">Delete</button></td>`;
+
+    }
+
+    function deleteSubproduct(id) {
+        editModal.querySelector(`tr[data-id="${id}"]`).remove()
+    }
 
     // Handles deletion requests.
     function clickedDelete() {
@@ -191,7 +212,13 @@
         const dataToSend = {
             id: selectedId,
             deadline_time: document.getElementById('edit_deadline').value,
+            product_ids: []
         };
+
+        for (const row of editModal.querySelector("#subproductsTable tbody").children) {
+            const id = row.getAttribute("data-id");
+            dataToSend.product_ids.push(id)
+        }
 
         const method = (selectedId == null) ? 'POST' : 'PUT';
         sendDataAndDoOrElse(method, '/production_goals', dataToSend,

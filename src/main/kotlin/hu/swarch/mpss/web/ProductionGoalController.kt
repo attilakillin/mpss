@@ -3,12 +3,15 @@ package hu.swarch.mpss.web
 import hu.swarch.mpss.dal.ProductRepository
 import hu.swarch.mpss.dal.ProductionGoalRepository
 import hu.swarch.mpss.dto.*
+import hu.swarch.mpss.services.EntityDoesntExists
+import hu.swarch.mpss.services.IdCannotBeNullException
 import hu.swarch.mpss.services.ProductionGoalService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
+import java.lang.Exception
 
 
 @Controller
@@ -28,12 +31,28 @@ class ProductionGoalController(
 
     @PostMapping
     fun postBasicPart(@RequestBody data: ProductionGoalDTO, model: Model): ResponseEntity<Unit> {
-        productionGoalService.createProductionGoal(data)
+        try {
+            productionGoalService.createProductionGoal(data)
+        } catch (e : EntityDoesntExists) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+        } catch (e : Exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+        }
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
     @PutMapping
     fun putBasicPart(@RequestBody data: ProductionGoalDTO, model: Model): ResponseEntity<Unit> {
+        try {
+            productionGoalService.updateProductionGoal(data)
+        } catch (e : EntityDoesntExists) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+        } catch (e : IdCannotBeNullException) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+        }
+        catch (e : Exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+        }
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 

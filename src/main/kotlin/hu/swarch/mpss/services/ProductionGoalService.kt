@@ -2,7 +2,6 @@ package hu.swarch.mpss.services
 
 import hu.swarch.mpss.dal.ProductRepository
 import hu.swarch.mpss.dal.ProductionGoalRepository
-import hu.swarch.mpss.dto.ProductDTO
 import hu.swarch.mpss.dto.ProductionGoalDTO
 import hu.swarch.mpss.entities.Product
 import hu.swarch.mpss.entities.ProductionGoal
