@@ -32,4 +32,9 @@ class AuthenticationController(
     fun getLoginPage(): String {
         return "user_login"
     }
+
+    @GetMapping("/forbidden")
+    fun getForbiddenErrorPage(): String {
+        return "error_forbidden"
+    }
 }
