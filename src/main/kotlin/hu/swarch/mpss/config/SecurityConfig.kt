@@ -30,7 +30,7 @@ class SecurityConfig(
             .formLogin()
                 .loginPage("/auth/login")
                 .loginProcessingUrl("/auth/login")
-                .successForwardUrl("/")
+                .defaultSuccessUrl("/")
                 .usernameParameter("username")
                 .passwordParameter("password")
 
