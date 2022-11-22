@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="h-100">
+    <!-- Head tag, using a fragment reference -->
+    <div th:replace="fragments/generic_head :: head('Login to MPSS')"></div>
+
+    <!-- Body contents -->
+    <body class="container h-100 my-1">
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="col-md-6 col-lg-5 m-1 p-3 rounded" style="background: #eeeeee">
+                <form th:action="@{/auth/login}" method="post">
+
+                    <h3 class="text-center">Log in to continue</h3>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username:</label>
+                        <input type="text" name="username" id="username" required class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password:</label>
+                        <input type="password" name="password" id="password" required class="form-control">
+                    </div>
+
+                    <div class="alert alert-danger" th:if="${param.error != null}">
+                        The provided credentials are invalid!
+                    </div>
+
+                    <div class="d-grid mb-2">
+                        <button type="submit" class="btn btn-primary">Log in</button>
+                    </div>
+                    <div class="text-center">
+                        <a th:href="@{/auth/register}">Not yet registered?</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Additional scripts: Bootstrap -->
+        <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    </body>
+</html>
