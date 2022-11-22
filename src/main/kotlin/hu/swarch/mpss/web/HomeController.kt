@@ -17,7 +17,7 @@ class HomeController {
             Role.PROCUREMENT -> "redirect:/basic_parts"
             Role.PRODUCTION_MANAGER -> "redirect:/complex_parts"
             Role.MANAGER -> "redirect:/production_goals"
-            Role.ADMINISTRATOR -> "redirect:/administration" // TODO Implement endpoint
+            Role.ADMINISTRATOR -> "redirect:/user_management"
             else -> "home"
         }
     }

@@ -42,7 +42,7 @@
             </button>
             <button type="button" class="btn btn-outline-danger hover-button"
                     data-bs-toggle="modal" data-bs-target="#deleteModal"
-                    th:data-bs-id="${u.id}">
+                    th:data-bs-id="${u.id}" th:data-bs-username="${u.username}">
               Delete
             </button>
           </div>
@@ -90,8 +90,17 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5">Are you sure you want to delete this production goal?</h1>
+        <h1 class="modal-title fs-5">Are you sure you want to delete this user?</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="delete_username_retype" class="col-form-label">Please type the username</label>
+          <input type="text" class="form-control" id="delete_username_retype" placeholder="username">
+        </div>
+        <div class="alert alert-danger" id="retype_fail_message" hidden>
+          Please type the correct username!
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
@@ -107,6 +116,7 @@
 
 <script>
   let selectedId = null;
+  let selectedUsername = null;
 
   // Handles data fill for the edit modal.
   const editModal = document.getElementById("editModal");
@@ -123,18 +133,24 @@
   deleteModal.addEventListener('show.bs.modal', event => {
     const button = event.relatedTarget;
     selectedId = button.getAttribute('data-bs-id');
+    selectedUsername = button.getAttribute('data-bs-username')
+    deleteModal.querySelector('#delete_username_retype').placeholder = button.getAttribute('data-bs-username');
   });
 
   // Handles deletion requests.
   function clickedDelete() {
-    const dataToSend = {
-      id: selectedId
-    };
-
-    sendDataAndDoOrElse('DELETE', '/production_goals', dataToSend,
-            () => location.reload(),
-            () => {}
-    );
+    const username_input = deleteModal.querySelector("#delete_username_retype").value;
+    if (username_input == selectedUsername) {
+      const dataToSend = {
+        id: selectedId
+      };
+      sendDataAndDoOrElse('DELETE', '/user_management', dataToSend,
+              () => location.reload(),
+              () => {}
+      );
+    } else {
+      document.getElementById("retype_fail_message").removeAttribute("hidden")
+    }
   }
 
   // Handles creation and edit requests.
