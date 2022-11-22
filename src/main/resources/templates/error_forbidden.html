@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="h-100">
+    <!-- Head tag, using a fragment reference -->
+    <div th:replace="fragments/generic_head :: head('Error')"></div>
+
+    <!-- Body contents -->
+    <body class="container h-100">
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="col-md-6 col-lg-5 m-1 p-3 rounded" style="background: #eeeeee">
+                <h3 class="text-center">Access denied!</h3>
+
+                <p>
+                    If you think you should have access to the resource, please contact your administrator!
+                </p>
+
+                <div class="text-center">
+                    <a th:href="@{/}">Click here to go home!</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional scripts: Bootstrap -->
+        <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    </body>
+</html>

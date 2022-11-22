@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="h-100">
+    <body>
+        <nav th:fragment="navigation_bar" class="navbar navbar-expand-md navbar-light mb-3 px-3"
+             style="background-color: #dddddd;">
+            <a class="navbar-brand" th:href="@{/}">MPSS</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarDropdown">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarDropdown">
+                <div class="navbar-nav me-auto">
+                    <a th:if="${#strings.contains(#authentication.principal.authorities, 'MANAGE_BASIC_PARTS')}"
+                       class="nav-item nav-link active" th:href="@{/basic_parts}">Basic parts</a>
+                    <a th:if="${#strings.contains(#authentication.principal.authorities, 'MANAGE_COMPLEX_PARTS')}"
+                       class="nav-item nav-link active" th:href="@{/complex_parts}">Complex parts</a>
+                    <a th:if="${#strings.contains(#authentication.principal.authorities, 'MANAGE_PROD_GOALS')}"
+                       class="nav-item nav-link active" th:href="@{/production_goals}">Production goals</a>
+                    <a th:if="${#strings.contains(#authentication.principal.authorities, 'MANAGE_USERS')}"
+                       class="nav-item nav-link active" th:href="@{/administration}">Administration</a>
+                </div>
+                <div class="navbar-nav">
+                    <span class="navbar-text" th:text="${'Logged in as: ' + #authentication.principal.username}"></span>
+                    <a class="nav-item nav-link ms-3" th:href="@{/auth/logout}">Logout</a>
+                </div>
+            </div>
+        </nav>
+    </body>
+</html>
