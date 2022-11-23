@@ -3,12 +3,6 @@
     <!-- Head tag, using a fragment reference -->
     <div th:replace="fragments/generic_head :: head('Procurements')"></div>
 
-    <!-- Internal styling for the Details button -->
-    <style>
-        .hover-button { opacity: 0; }
-        tr:hover .hover-button { opacity: 1; }
-    </style>
-
     <!-- Body contents -->
     <body class="container h-100">
         <div th:replace="fragments/navigation_bar :: navigation_bar"></div>
@@ -20,13 +14,12 @@
                 <p>
                     The table below contains how much of each basic part must be procured at what date (at the latest)
                     if we want to complete every production goal up until their deadline.
-
-                    To see the details of an entry, hover over its line.
                 </p>
 
                 <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th scope="col">Goal ID</th>
                             <th scope="col">Part name</th>
                             <th scope="col">Count</th>
                             <th scope="col">Deadline</th>
@@ -34,19 +27,10 @@
                     </thead>
                     <tbody>
                         <tr th:each="proc : ${procurements}">
+                            <td th:text="${proc.targetGoal.id}"></td>
                             <td th:text="${proc.part.name}"></td>
                             <td th:text="${proc.count + ' pcs'}"></td>
                             <td th:text="${proc.deadlineAsString}"></td>
-                            <td>
-                                <div class="float-end">
-                                    <a th:href="'/procurement_details/' + ${proc.part.id}">
-                                        <button type="button" class="btn btn-outline-primary me-1 hover-button"
-                                                data-bs-toggle="modal">
-                                            Details
-                                        </button>
-                                    </a>
-                                </div>
-                            </td>
                         </tr>
                     </tbody>
                 </table>

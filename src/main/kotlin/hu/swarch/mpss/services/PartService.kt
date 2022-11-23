@@ -17,25 +17,11 @@ class PartService(
         return results
     }
 
-    private fun getProcurementToCompletionDurations(part: BasicPart): MutableMap<Part, PartProcurementData> {
-        return mutableMapOf(part to PartProcurementData(1, part.procurementTime))
-    }
-
-    private fun getProcurementToCompletionDurations(part: ComplexPart): MutableMap<Part, PartProcurementData> {
-        val result = getProcurementToCompletionDurations(part.subparts)
-
-        for ((subpart, data) in result) {
-            result[subpart] = PartProcurementData(data.count, data.deadlineBeforeFinish.plus(part.constructionTime))
-        }
-
-        return result
-    }
-
     fun getProcurementToCompletionDurations(parts: Map<Part, Int>): MutableMap<Part, PartProcurementData> {
         val result = mutableMapOf<Part, PartProcurementData>()
 
         for ((subpart, count) in parts) {
-            val subResult = getProcurementToCompletionDurations(subpart)
+            val subResult = getSubpartCompletionDuration(subpart)
 
             for ((rootPart, data) in subResult) {
                 val dataSoFar = result[rootPart]
@@ -53,10 +39,14 @@ class PartService(
         return result
     }
 
-    fun getProcurementToCompletionDurations(part: Part): MutableMap<Part, PartProcurementData> {
+    fun getSubpartCompletionDuration(part: Part): MutableMap<Part, PartProcurementData> {
         return when (part) {
-            is BasicPart -> getProcurementToCompletionDurations(part)
-            is ComplexPart -> getProcurementToCompletionDurations(part)
+            is BasicPart -> mutableMapOf(part to PartProcurementData(1, part.procurementTime))
+            is ComplexPart -> {
+                return getProcurementToCompletionDurations(part.subparts).mapValues { (_, data) ->
+                    PartProcurementData(data.count, data.deadlineBeforeFinish.plus(part.constructionTime))
+                }.toMutableMap()
+            }
             else -> throw IllegalStateException("Found invalid part type!")
         }
     }

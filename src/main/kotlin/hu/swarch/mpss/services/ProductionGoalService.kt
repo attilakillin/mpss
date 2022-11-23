@@ -62,21 +62,18 @@ class ProductionGoalService(
         productionGoalRepository.deleteById(id)
     }
 
-    fun getLatestProcurementDatesOfBasicParts(goal: ProductionGoal): List<ProductProcurementData> {
-        val durations = partService.getProcurementToCompletionDurations(goal.products)
-
-        val result = mutableListOf<ProductProcurementData>()
-        for ((part, data) in durations) {
-            result.add(ProductProcurementData(part, data.count, goal.deadline.minus(data.deadlineBeforeFinish)))
-        }
-
-        return result
-    }
-
     fun getLatestProcurementDatesOfBasicParts(): List<ProductProcurementData> {
         val result = mutableListOf<ProductProcurementData>()
+
         for (goal in productionGoalRepository.findAll()) {
-            result.addAll(getLatestProcurementDatesOfBasicParts(goal))
+            result.addAll(
+                partService.getProcurementToCompletionDurations(goal.products)
+                    .map { ProductProcurementData(
+                        targetGoal = goal,
+                        part = it.key,
+                        count = it.value.count,
+                        deadline = goal.deadline.minus(it.value.deadlineBeforeFinish)
+                    ) })
         }
 
         return result
