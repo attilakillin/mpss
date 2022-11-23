@@ -26,6 +26,7 @@ class SecurityConfig(
                 .antMatchers("/basic_parts", "/basic_parts/**").hasAuthority("MANAGE_BASIC_PARTS")
                 .antMatchers("/complex_parts", "/complex_parts/**").hasAuthority("MANAGE_COMPLEX_PARTS")
                 .antMatchers("/production_goals", "/production_goals/**").hasAuthority("MANAGE_PROD_GOALS")
+                .antMatchers("/user_management", "/user_management/**").hasAuthority("MANAGE_USERS")
                 .anyRequest().authenticated()
                 .and()
             .exceptionHandling()

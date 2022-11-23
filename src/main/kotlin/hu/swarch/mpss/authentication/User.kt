@@ -11,7 +11,7 @@ data class User(
     private val username: String,
     private val password: String,
     @Enumerated(EnumType.STRING)
-    val role: Role
+    var role: Role
 ) : UserDetails {
     override fun getUsername() = username
     override fun getPassword() = password
