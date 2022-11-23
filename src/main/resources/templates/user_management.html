@@ -1,171 +1,180 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" class="h-100">
-<!-- Head tag, using a fragment reference -->
-<div th:replace="fragments/generic_head :: head('User management')"></div>
+    <!-- Head tag, using a fragment reference -->
+    <div th:replace="fragments/generic_head :: head('User management')"></div>
 
-<!-- Internal styling for the Edit and Delete buttons -->
-<style>
-  .hover-button { opacity: 0; }
-  tr:hover .hover-button { opacity: 1; }
-</style>
+    <!-- Internal styling for the Edit and Delete buttons -->
+    <style>
+        .hover-button { opacity: 0; }
+        tr:hover .hover-button { opacity: 1; }
+    </style>
 
-<!-- Body contents -->
-<body class="container h-100">
-<div th:replace="fragments/navigation_bar :: navigation_bar"></div>
+    <!-- Body contents -->
+    <body class="container h-100">
+        <div th:replace="fragments/navigation_bar :: navigation_bar"></div>
 
-<div class="row h-100 justify-content-center align-items-baseline">
-  <div class="col-lg-10 m-1 p-3 rounded" style="background: #eeeeee">
+        <div class="row h-100 justify-content-center align-items-baseline">
+            <div class="col-lg-10 m-1 p-3 rounded" style="background: #eeeeee">
 
-    <h1 class="text-center">Manage users</h1>
-    <p>
+                <h1 class="text-center">Manage users</h1>
+                <p>
+                    The table below contains all users currently registered in the system.
+                    To modify the role of a user, or delete them, hover over
+                    their row, and click the respective button on the right.
+                </p>
 
-    </p>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Username</th>
+                            <th scope="col">Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="u : ${users}">
+                            <td th:text="${u.getUsername()}"></td>
+                            <td th:text="${u.role.getPrettyString()}"></td>
+                            <td>
+                                <div class="float-end" th:unless="${#strings.equals(#authentication.principal.username, u.getUsername())}">
+                                    <button type="button" class="btn btn-outline-primary me-1 hover-button"
+                                            data-bs-toggle="modal" data-bs-target="#editModal"
+                                            th:data-bs-id="${u.id}" th:data-bs-username="${u.getUsername()}"
+                                            th:data-bs-role="${u.role}" >
+                                        Update Role
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger hover-button"
+                                            data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                            th:data-bs-id="${u.id}" th:data-bs-username="${u.getUsername()}">
+                                        Delete
+                                    </button>
+                                </div>
+                                <div class="float-end" th:if="${#strings.equals(#authentication.principal.username, u.getUsername())}">
+                                    <p class="text-muted hover-button">You can't edit your own permissions!</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
-    <table class="table table-hover">
-      <thead>
-      <tr>
-        <th scope="col">Username</th>
-        <th scope="col">Role</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="u : ${users}">
-        <td th:text="${u.username}"></td>
-        <td th:text="${u.prettyRole}"></td>
-        <td>
-          <div class="float-end">
-            <button type="button" class="btn btn-outline-primary me-1 hover-button"
-                    data-bs-toggle="modal" data-bs-target="#editModal"
-                    th:data-bs-id="${u.id}" th:data-bs-username="${u.username}"
-                    th:data-bs-role="${u.role}" >
-              Update Role
-            </button>
-            <button type="button" class="btn btn-outline-danger hover-button"
-                    data-bs-toggle="modal" data-bs-target="#deleteModal"
-                    th:data-bs-id="${u.id}" th:data-bs-username="${u.username}">
-              Delete
-            </button>
-          </div>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-
-  </div>
-</div>
-
-<!-- Bootstrap modal dialog for part editing -->
-<div class="modal" id="editModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5">Update user's role</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-3">
-          <label for="input_username" class="col-form-label">Username:</label>
-          <input type="text" class="form-control" id="input_username" placeholder="username" readonly>
+            </div>
         </div>
-        <div class="mb-3">
-          <label for="edit_role" class="col-form-label">Username:</label>
-          <select id="edit_role">
-            <option th:each="r : ${roles}" th:text="${r.prettyString}" th:value="${r.toString()}" value="ADMINISTRATOR">Administrator</option>
-          </select>
+
+        <!-- Bootstrap modal dialog for part editing -->
+        <div class="modal" id="editModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="edit_title">Update the role of the selected user</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="edit_role" class="col-form-label me-3">Role:</label>
+                            <select class="form-select" id="edit_role">
+                                <option th:each="r : ${roles}" th:text="${r.prettyString}" th:value="${r.toString()}" value="ADMINISTRATOR">Administrator</option>
+                            </select>
+                        </div>
+                        <div class="alert alert-danger" id="edit_fail_message" hidden>
+                            Could not update user!
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="clickedSave()">Update</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="alert alert-danger" id="edit_fail_message" hidden>
-          Could not update user!
+
+        <!-- Bootstrap modal dialog for user deletion. -->
+        <div class="modal" id="deleteModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Are you sure you want to delete this user?</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="delete_username_retype" class="col-form-label">Please type the username to confirm!</label>
+                            <input type="text" class="form-control" id="delete_username_retype" placeholder="username">
+                        </div>
+                        <div class="alert alert-danger" id="retype_fail_message" hidden>
+                            Please type the username correctly in order to delete them!
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-primary" onclick="clickedDelete()">Yes</button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" onclick="clickedSave()">Update</button>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- Bootstrap modal dialog for part deletion. -->
-<div class="modal" id="deleteModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5">Are you sure you want to delete this user?</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-3">
-          <label for="delete_username_retype" class="col-form-label">Please type the username</label>
-          <input type="text" class="form-control" id="delete_username_retype" placeholder="username">
-        </div>
-        <div class="alert alert-danger" id="retype_fail_message" hidden>
-          Please type the correct username!
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-        <button type="button" class="btn btn-primary" onclick="clickedDelete()">Yes</button>
-      </div>
-    </div>
-  </div>
-</div>
+        <!-- Additional scripts: Bootstrap and modal handling -->
+        <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+        <script th:src="@{/js/datasending.js}"></script>
 
-<!-- Additional scripts: Bootstrap and modal handling -->
-<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
-<script th:src="@{/js/datasending.js}"></script>
+        <script>
+            let selectedId = null;
+            let selectedUsername = null;
 
-<script>
-  let selectedId = null;
-  let selectedUsername = null;
+            // Handles data fill for the edit modal.
+            const editModal = document.getElementById("editModal");
+            editModal.addEventListener('show.bs.modal', event => {
+                const button = event.relatedTarget;
 
-  // Handles data fill for the edit modal.
-  const editModal = document.getElementById("editModal");
-  editModal.addEventListener('show.bs.modal', event => {
-    const button = event.relatedTarget;
+                selectedId = button.getAttribute('data-bs-id');
+                editModal.querySelector('#edit_title').innerHTML = "Update the role of '" + button.getAttribute('data-bs-username') + "'";
+                editModal.querySelector('#edit_role').value = button.getAttribute('data-bs-role');
+            });
 
-    selectedId = button.getAttribute('data-bs-id');
-    editModal.querySelector('#input_username').value = button.getAttribute('data-bs-username');
-    editModal.querySelector('#edit_role').value = button.getAttribute('data-bs-role');
-  });
+            // Handles data fill for the delete modal.
+            const deleteModal = document.getElementById("deleteModal");
+            deleteModal.addEventListener('show.bs.modal', event => {
+                const button = event.relatedTarget;
+                selectedId = button.getAttribute('data-bs-id');
+                selectedUsername = button.getAttribute('data-bs-username');
+                deleteModal.querySelector('#delete_username_retype').placeholder = button.getAttribute('data-bs-username');
+            });
 
-  // Handles data fill for the delete modal.
-  const deleteModal = document.getElementById("deleteModal");
-  deleteModal.addEventListener('show.bs.modal', event => {
-    const button = event.relatedTarget;
-    selectedId = button.getAttribute('data-bs-id');
-    selectedUsername = button.getAttribute('data-bs-username')
-    deleteModal.querySelector('#delete_username_retype').placeholder = button.getAttribute('data-bs-username');
-  });
+            editModal.addEventListener('hide.bs.modal', () => {
+                editModal.querySelector('#edit_fail_message').setAttribute("hidden", "true");
+            });
 
-  // Handles deletion requests.
-  function clickedDelete() {
-    const username_input = deleteModal.querySelector("#delete_username_retype").value;
-    if (username_input == selectedUsername) {
-      const dataToSend = {
-        id: selectedId
-      };
-      sendDataAndDoOrElse('DELETE', '/user_management', dataToSend,
-              () => location.reload(),
-              () => {}
-      );
-    } else {
-      document.getElementById("retype_fail_message").removeAttribute("hidden")
-    }
-  }
+            deleteModal.addEventListener('hide.bs.modal', () => {
+                deleteModal.querySelector("#delete_username_retype").value = "";
+                deleteModal.querySelector("#retype_fail_message").setAttribute("hidden", "true");
+            });
 
-  // Handles creation and edit requests.
-  function clickedSave() {
-    const dataToSend = {
-      id: selectedId,
-      username: document.getElementById('input_username').value,
-      role: document.getElementById('edit_role').value
-    };
-    const method = 'PUT';
-    sendDataAndDoOrElse(method, '/user_management', dataToSend,
-            () => location.reload(),
-            () => document.getElementById("edit_fail_message").removeAttribute("hidden")
-    );
-  }
-</script>
-</body>
+            // Handles deletion requests.
+            function clickedDelete() {
+                const username_input = deleteModal.querySelector("#delete_username_retype").value;
+                if (username_input === selectedUsername) {
+                    const dataToSend = {
+                        id: selectedId
+                    };
+                    sendDataAndDoOrElse('DELETE', '/user_management', dataToSend,
+                        () => location.reload(),
+                        () => {}
+                    );
+                } else {
+                    document.getElementById("retype_fail_message").removeAttribute("hidden")
+                }
+            }
+
+            // Handles creation and edit requests.
+            function clickedSave() {
+                const dataToSend = {
+                    id: selectedId,
+                    role: document.getElementById('edit_role').value
+                };
+                const method = 'PUT';
+                sendDataAndDoOrElse(method, '/user_management', dataToSend,
+                    () => location.reload(),
+                    () => document.getElementById("edit_fail_message").removeAttribute("hidden")
+                );
+            }
+        </script>
+    </body>
 </html>

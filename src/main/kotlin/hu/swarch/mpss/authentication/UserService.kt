@@ -1,6 +1,5 @@
 package hu.swarch.mpss.authentication
 
-import hu.swarch.mpss.dto.UserDTO
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -29,14 +28,14 @@ class UserService(
         return userRepository.findByUsername(username.lowercase()) ?: throw UsernameNotFoundException(username)
     }
 
-    fun updateUser(username: String, role: Role) {
-        var user = userRepository.findByUsername(username.lowercase()) ?: throw UsernameNotFoundException(username)
+    fun updateUser(id: Long, role: Role): User? {
+        val user = userRepository.findByIdOrNull(id) ?: return null
         user.role = role
-        userRepository.save(user)
+        return userRepository.save(user)
     }
 
-    fun getUsers() : List<UserDTO> {
-        return userRepository.findAll().map { UserDTO(it.id, it.username, it.role.toString(), it.role.prettyString) }
+    fun findAllUsers() : List<User> {
+        return userRepository.findAll()
     }
 
     fun deleteUser(id: Long) {
