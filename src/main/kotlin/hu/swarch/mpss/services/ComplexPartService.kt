@@ -51,7 +51,12 @@ class ComplexPartService(
         return partRepository.save(part)
     }
 
-    fun deleteComplexPart(id: Long) {
-        partRepository.deleteById(id)
+    fun deleteComplexPart(id: Long): Boolean {
+        return try {
+            partRepository.deleteById(id)
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 }

@@ -40,7 +40,12 @@ class BasicPartService(
         return partRepository.save(part)
     }
 
-    fun deleteBasicPart(id: Long) {
-        partRepository.deleteById(id)
+    fun deleteBasicPart(id: Long): Boolean {
+        return try {
+            partRepository.deleteById(id)
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 }

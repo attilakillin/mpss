@@ -41,7 +41,11 @@ class ComplexPartController(
     }
     @DeleteMapping
     fun deleteComplexPart(@RequestBody id: IdDTO, model: Model): ResponseEntity<Unit> {
-        complexPartService.deleteComplexPart(id.id)
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+        val success = complexPartService.deleteComplexPart(id.id)
+        return if (success) {
+            ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+        } else {
+            ResponseEntity.status(HttpStatus.CONFLICT).build()
+        }
     }
 }

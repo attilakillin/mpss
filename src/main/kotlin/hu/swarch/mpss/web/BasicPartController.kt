@@ -33,7 +33,11 @@ class BasicPartController(
 
     @DeleteMapping
     fun deleteBasicPart(@RequestBody id: IdDTO, model: Model): ResponseEntity<Unit> {
-        basicPartService.deleteBasicPart(id.id)
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+        val success = basicPartService.deleteBasicPart(id.id)
+        return if (success) {
+            ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+        } else {
+            ResponseEntity.status(HttpStatus.CONFLICT).build()
+        }
     }
 }

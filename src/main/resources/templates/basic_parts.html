@@ -109,9 +109,11 @@
                     </div>
                     <div class="modal-body">
                         <p>
-                            Deleting this part may result in the deletion of any complex parts and products
-                            that use this part as a component!
+                            Deleting may fail if any complex parts or production goals depend on this part!
                         </p>
+                        <div class="alert alert-danger" id="delete_fail_message" hidden>
+                            Could not delete part! Make sure no other parts and production goals refer to this part!
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
@@ -150,6 +152,10 @@
                 selectedId = button.getAttribute('data-bs-id');
             });
 
+            deleteModal.addEventListener('hide.bs.modal', () => {
+                deleteModal.querySelector('#delete_fail_message').setAttribute("hidden", "true");
+            });
+
             // Handles deletion requests.
             function clickedDelete() {
                 const dataToSend = {
@@ -158,7 +164,7 @@
 
                 sendDataAndDoOrElse('DELETE', '/basic_parts', dataToSend,
                     () => location.reload(),
-                    () => {}
+                    () => deleteModal.querySelector('#delete_fail_message').removeAttribute("hidden")
                 );
             }
 

@@ -27,7 +27,7 @@
                     </thead>
                     <tbody>
                         <tr th:each="proc : ${procurements}">
-                            <td th:text="${proc.targetGoal.id}"></td>
+                            <td th:text="${'#' + proc.targetGoal.id}"></td>
                             <td th:text="${proc.part.name}"></td>
                             <td th:text="${proc.count + ' pcs'}"></td>
                             <td th:text="${proc.deadlineAsString}"></td>
