@@ -2,12 +2,12 @@ package hu.swarch.mpss.authentication
 
 import org.springframework.security.core.GrantedAuthority
 
-enum class Role(private vararg val _authorities: Authority) {
-    ADMINISTRATOR(Authority.MANAGE_USERS),
-    PROCUREMENT(Authority.MANAGE_BASIC_PARTS, Authority.SEE_PROCUREMENT_OVERVIEW),
-    PRODUCTION_MANAGER(Authority.MANAGE_COMPLEX_PARTS),
-    MANAGER(Authority.MANAGE_PROD_GOALS),
-    BASIC_USER;
+enum class Role(val prettyString: String, private vararg val _authorities: Authority) {
+    ADMINISTRATOR("Administrator", Authority.MANAGE_USERS ),
+    PROCUREMENT("Procurement", Authority.MANAGE_BASIC_PARTS, Authority.SEE_PROCUREMENT_OVERVIEW),
+    PRODUCTION_MANAGER("Production manager", Authority.MANAGE_COMPLEX_PARTS),
+    MANAGER("Manager", Authority.MANAGE_PROD_GOALS),
+    BASIC_USER("Basic user");
 
     val authorities get() = _authorities.toList()
 }

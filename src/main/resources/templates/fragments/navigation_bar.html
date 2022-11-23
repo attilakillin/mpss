@@ -17,7 +17,7 @@
                     <a th:if="${#strings.contains(#authentication.principal.authorities, 'MANAGE_PROD_GOALS')}"
                        class="nav-item nav-link active" th:href="@{/production_goals}">Production goals</a>
                     <a th:if="${#strings.contains(#authentication.principal.authorities, 'MANAGE_USERS')}"
-                       class="nav-item nav-link active" th:href="@{/administration}">Administration</a>
+                       class="nav-item nav-link active" th:href="@{/user_management}">User management</a>
                 </div>
                 <div class="navbar-nav">
                     <span class="navbar-text" th:text="${'Logged in as: ' + #authentication.principal.username}"></span>
