@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="h-100">
+    <!-- Head tag, using a fragment reference -->
+    <div th:replace="fragments/generic_head :: head('Procurements')"></div>
+
+    <!-- Body contents -->
+    <body class="container h-100">
+        <div th:replace="fragments/navigation_bar :: navigation_bar"></div>
+
+        <div class="row h-100 justify-content-center align-items-baseline">
+            <div class="col-lg-10 m-1 p-3 rounded" style="background: #eeeeee">
+
+                <h1 class="text-center">Procurement deadlines</h1>
+                <p>
+                    The table below contains how much of each basic part must be procured at what date (at the latest)
+                    if we want to complete every production goal up until their deadline.
+                </p>
+
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Goal ID</th>
+                            <th scope="col">Part name</th>
+                            <th scope="col">Count</th>
+                            <th scope="col">Deadline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="proc : ${procurements}">
+                            <td th:text="${proc.targetGoal.id}"></td>
+                            <td th:text="${proc.part.name}"></td>
+                            <td th:text="${proc.count + ' pcs'}"></td>
+                            <td th:text="${proc.deadlineAsString}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+        <!-- Additional scripts: Bootstrap and modal handling -->
+        <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
+    </body>
+</html>
