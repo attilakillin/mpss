@@ -1,7 +1,7 @@
 package hu.swarch.mpss.entities
 
-import java.time.Duration
 import javax.persistence.*
+
 @Entity(name = "parts")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 abstract class Part(
@@ -17,6 +17,4 @@ abstract class Part(
     override fun hashCode(): Int {
         return id.hashCode()
     }
-    abstract fun getAllSubParts(): MutableMap<Part, String>
-    abstract fun calculateSumDuration(): Duration
 }

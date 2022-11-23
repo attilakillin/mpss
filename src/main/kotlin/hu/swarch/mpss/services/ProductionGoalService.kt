@@ -14,7 +14,8 @@ import java.time.format.DateTimeFormatter
 @Service
 class ProductionGoalService(
     private val productionGoalRepository: ProductionGoalRepository,
-    private val partRepository: PartRepository
+    private val partRepository: PartRepository,
+    private val partService: PartService
 ) {
     private fun dtoToEntity(dto: ProductionGoalDTO): ProductionGoal? {
         if (dto.products.isEmpty()) return null
@@ -59,5 +60,25 @@ class ProductionGoalService(
 
     fun deleteProductionGoal(id: Long) {
         productionGoalRepository.deleteById(id)
+    }
+
+    fun getLatestProcurementDatesOfBasicParts(goal: ProductionGoal): List<ProductProcurementData> {
+        val durations = partService.getProcurementToCompletionDurations(goal.products)
+
+        val result = mutableListOf<ProductProcurementData>()
+        for ((part, data) in durations) {
+            result.add(ProductProcurementData(part, data.count, goal.deadline.minus(data.deadlineBeforeFinish)))
+        }
+
+        return result
+    }
+
+    fun getLatestProcurementDatesOfBasicParts(): List<ProductProcurementData> {
+        val result = mutableListOf<ProductProcurementData>()
+        for (goal in productionGoalRepository.findAll()) {
+            result.addAll(getLatestProcurementDatesOfBasicParts(goal))
+        }
+
+        return result
     }
 }
